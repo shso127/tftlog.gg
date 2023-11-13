@@ -6,7 +6,7 @@
 
         <div class="search">
             <input type="text" placeholder="소환사 검색">
-            <img class="imgSearch" src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png">
+            <img @click="console.log(1)" class="imgSearch" src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png">
         </div>
     </div>
 </template>
