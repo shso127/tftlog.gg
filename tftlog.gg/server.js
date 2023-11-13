@@ -2,6 +2,9 @@ const express = require('express')
 const app = express()
 
 app.use(express.static(__dirname + '/public'))
+app.set('view engine', 'ejs')
+app.use(express.json())
+app.use(express.urlencoded({extended:true})) 
 
 const { MongoClient } = require('mongodb')
 
@@ -22,7 +25,29 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
 })
 
-app.get('/news', (req, res) => {
-    db.collection('post').insertOne({title : '어쩌구'})
-    // res.send('오늘비옴')
+app.get('/list', async (req, res) => {
+    let result = await db.collection('post').find().toArray()
+    res.render('list.ejs', { contentList : result })
+})
+
+app.get('/write', (req, res) => {
+    res.render('write.ejs')
+})
+
+app.post('/add', async (req, res) => {
+    console.log(req.body)
+
+    try {
+        if (req.body.title == ''){
+            res.send('제목을 입력해 주세요')
+        }
+        else {
+            await db.collection('post').insertOne({ title : req.body.title , content : req.body.content })
+            res.redirect('/list')
+        }
+    } catch(e) {
+        console.log(e)
+        res.status(500).send('서버에러남')
+    }
+    
 })
