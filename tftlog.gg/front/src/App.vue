@@ -1,22 +1,20 @@
 <template>
-  aaa
+  <Navbar/>
+  <Container/>
 </template>
 
 <script>
-
+import Navbar from "./components/Navbar"
+import Container from "./components/Container"
 
 export default {
   name: 'App',
   components: {
-    
-  }
+    Navbar: Navbar,
+    Container: Container,
+}
 }
 </script>
 
 <style>
-body {
-  margin : 0;
-  background : rgb(50,50,50);
-  color : white;
-}
 </style>
