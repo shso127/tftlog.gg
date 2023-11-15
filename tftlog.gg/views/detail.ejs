@@ -11,13 +11,10 @@
 <body class="grey-bg">
 
     <%- include('nav.ejs') %>
-
-    <form class="form-box" action="/add" method="POST">
-        <h4>글쓰기</h4>
-        <input name="title">
-        <input name="content">
-        <button type="submit">전송</button>
-    </form> 
+    <div class="detail-bg"> 
+        <h4><%= result.title %></h4> 
+        <p><%= result.content %></p> 
+      </div>
 
 </body>
 

@@ -1,12 +1,14 @@
 const express = require('express')
 const app = express()
+const methodOverride = require('method-override')
 
+app.use(methodOverride('_method'))
 app.use(express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
 app.use(express.json())
 app.use(express.urlencoded({extended:true})) 
 
-const { MongoClient } = require('mongodb')
+const { MongoClient, ObjectId } = require('mongodb')
 
 let db
 const url = ''
@@ -49,5 +51,31 @@ app.post('/add', async (req, res) => {
         console.log(e)
         res.status(500).send('서버에러남')
     }
+})
+
+app.get('/detail/:id', async (req, res) => {
     
+    try {
+        let result = await db.collection('post').findOne({ _id : new ObjectId(req.params.id) })
+        if (result == null)
+            res.status(404).send('임의로 url 입력하여 오류남')
+        res.render('detail.ejs', { result : result })
+    } catch(e){
+        console.log(e)
+        res.status(404).send('임의로 url 입력하여 오류남')
+    }
+})
+
+app.get('/edit/:id', async (req, res) => {
+    let result = await db.collection('post').findOne({ _id : new ObjectId(req.params.id)})
+    console.log(result)
+    res.render('edit.ejs', {result : result})
+})
+
+app.put('/edit', async (req, res) => {
+    await db.collection('post').updateOne({ _id : new ObjectId(req.body.id)},
+        {$set : {title : req.body.title, content : req.body.content}})
+
+    console.log(req.body)
+    res.redirect('/list')
 })

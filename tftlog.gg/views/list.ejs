@@ -15,7 +15,12 @@
     <div class="white-bg">
         <% for (let i = 0; i < contentList.length; i++){ %>
             <div class="list-box">
-                <h4><%= contentList[i].title %></h4>
+                <h4>
+                    <a href="/detail/<%= contentList[i]._id %>">
+                        <%= contentList[i].title %>
+                    </a>
+                    <a href="/edit/<%= contentList[i]._id %>">✏️</a>
+                </h4>
                 <p>글내용임</p>
             </div>
         <% } %>
