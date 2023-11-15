@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const methodOverride = require('method-override')
+require('dotenv').config()
 
 app.use(methodOverride('_method'))
 app.use(express.static(__dirname + '/public'))
@@ -11,7 +12,7 @@ app.use(express.urlencoded({extended:true}))
 const { MongoClient, ObjectId } = require('mongodb')
 
 let db
-const url = ''
+const url = process.env.DB_URL
 new MongoClient(url).connect().then((client)=>{
   console.log('DB연결성공')
   db = client.db('tftlog')
@@ -19,7 +20,7 @@ new MongoClient(url).connect().then((client)=>{
   console.log(err)
 })
 
-app.listen(8080, () => {
+app.listen(process.env.PORT, () => {
     console.log('http://localhost:8080 에서 서버 실행중')
 })
 
