@@ -24,14 +24,14 @@ app.listen(8080, () => {
 })
 
 app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html')
+    res.render('home.ejs')
 })
 
 app.get('/list', async (req, res) => {
     let result = await db.collection('post').find().toArray()
     res.render('list.ejs', { contentList : result })
 })
-
+0
 app.get('/write', (req, res) => {
     res.render('write.ejs')
 })
