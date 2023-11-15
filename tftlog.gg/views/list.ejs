@@ -20,11 +20,28 @@
                         <%= contentList[i].title %>
                     </a>
                     <a href="/edit/<%= contentList[i]._id %>">✏️</a>
+                    <span class="delete" data-id="<%= contentList[i]._id %>">🗑️</span>
                 </h4>
                 <p>글내용임</p>
             </div>
         <% } %>
     </div>
+
+    <script>
+        for (let i = 0; i < '<%= contentList.length %>'; i++) {
+            document.querySelectorAll('.delete')[0]
+                .addEventListener('click', function(e){
+                
+                fetch('/delete?docid=' + e.target.dataset.id, {
+                    method : 'DELETE'
+                })
+                .then((r)=>r.text())
+                .then((r) => {
+                    e.target.parentElement.parentElement.style.display = 'none'
+                })
+            })
+        }
+    </script>
 
 </body>
 
