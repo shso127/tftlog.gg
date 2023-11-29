@@ -30,10 +30,9 @@
                     <a style="font-weight: bold;" href="/detail/<%= contentList[i]._id %>">
                         <%= contentList[i].title %>
                     </a>
-                    <a href="/edit/<%= contentList[i]._id %>">✏️</a>
-                    <span class="delete" data-id="<%= contentList[i]._id %>">🗑️</span>
+                    <a href="/edit/<%= contentList[i]._id %>" style="float: right;">✍️</a>
+                    <span class="delete" data-id="<%= contentList[i]._id %>" style="float: right;">❌</span>
                 </h4>
-                <p><%= contentList[i].content %></p>
             </div>
         <% } %>
     </div>

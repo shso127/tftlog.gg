@@ -107,4 +107,11 @@ a {
   border: none;
   border-radius: 5px;
   vertical-align: middle;
-} 
+}
+
+.profile-icon {
+  margin: 10px;
+  height: 100px; 
+  width: 100px;
+  border-radius: 10px;
+}

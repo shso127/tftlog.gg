@@ -3,6 +3,7 @@ const app = express()
 const methodOverride = require('method-override')
 const bcrypt = require('bcrypt')
 const { MongoClient, ObjectId } = require('mongodb')
+const axios = require('axios')
 require('dotenv').config()
 
 app.use(methodOverride('_method'))
@@ -18,7 +19,7 @@ const MongoStore = require('connect-mongo')
 
 app.use(passport.initialize())
 app.use(session({
-    secret: '암호화에 쓸 비번',
+    secret: 'abcdefg',
     resave: false,
     saveUninitialized: false,
     cookie: { maxAge: 60 * 60 * 1000 },
@@ -40,7 +41,7 @@ new MongoClient(url).connect().then((client) => {
 })
 
 app.listen(process.env.PORT, () => {
-    console.log('http://localhost:8080 에서 서버 실행중')
+    console.log('running at http://localhost:8080')
 })
 
 function checkLogin(req, res, next) {
@@ -203,4 +204,37 @@ app.get('/search', async (req, res) => {
     .aggregate(searchCondition).toArray()
     
     res.render('search.ejs', { contentList : result })
+})
+
+app.get('/profile', async (req, res) => {
+    const summoner = await axios.get(`https://kr.api.riotgames.com/tft/summoner/v1/summoners/by-name/${req.query.val}?api_key=${process.env.APIKey}`)
+    const summoner_leage = await axios.get(
+        `https://kr.api.riotgames.com/tft/league/v1/entries/by-summoner/${summoner.data.id}?api_key=${process.env.APIKey}`
+    )
+    const matches = await axios.get(
+        `https://asia.api.riotgames.com/tft/match/v1/matches/by-puuid/${summoner.data.puuid}/ids?start=0&count=${Math.min(20, summoner_leage.data[0].wins + summoner_leage.data[0].losses)}&api_key=${process.env.APIKey}`
+    )
+    let match_data = []
+    let match_info = []
+    for (let i = 0; i < Math.min(20, summoner_leage.data[0].wins + summoner_leage.data[0].losses); i++){
+        const tmp = await axios.get(
+            `https://asia.api.riotgames.com/tft/match/v1/matches/${matches.data[i]}?api_key=${process.env.APIKey}`
+        )
+        for (let j = 0; j < 8; j++){
+            if (tmp.data.metadata.participants[j] == summoner.data.puuid) {
+                match_data.push(tmp.data.info.participants[j])
+                break
+            }
+        }
+        match_info.push({game_datatime : tmp.data.info.game_datetime, game_length : tmp.data.info.game_length})
+    }
+    // console.log(summoner.data)
+    // console.log(match_data)
+    res.render('profile.ejs', 
+    { 
+        profile : summoner.data, 
+        league : summoner_leage.data[0], 
+        match_data : match_data,
+        match_info : match_info
+     })
 })

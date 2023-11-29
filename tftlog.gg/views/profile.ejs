@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="main.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js"></script>
+</head>
+
+<body class="grey-bg">
+
+    <%- include('nav.ejs') %>
+
+    <div style="display: flex;">
+        <div class="card" style="width: 12rem;display: grid;place-items: center;margin: 10px;">
+            <img class="profile-icon" src="https://ddragon.leagueoflegends.com/cdn/13.23.1/img/profileicon/<%= profile.profileIconId %>.png""/>
+            <div class="card-body">
+            <p style="font: bold;" class="card-text"><%= profile.name %></p>
+            </div>
+        </div>
+
+        <div class="card" style="width: 12rem;display: grid;place-items: center;margin: 10px;">
+            <img src="img/tier/Rank=<%= league.tier %>.png" style="height: 100px; width: 100px;margin: 10px;"/> <br>
+            <div class="card-body">
+                <%= league.tier %> <%= league.rank %> <%= league.leaguePoints %>LP
+            </div>
+        </div>
+
+        <div class="card" style="width: 18rem; margin: 10px">
+            <div class="card-header">
+              랭크게임
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">레벨 : <%= profile.summonerLevel %></li>
+              <li class="list-group-item">승리 : <%= league.wins %></li>
+              <li class="list-group-item">패배 : <%= league.losses %></li>
+              <li class="list-group-item"><div id="winRate">승률 : </div></li>
+            </ul>
+          </div>
+    </div>
+
+    <script>
+        document.getElementById('winRate').innerHTML += (<%= league.wins %> * 100 / (<%= league.wins %> + <%= league.losses %>)).toFixed(2)
+        document.getElementById('winRate').innerHTML += '%'
+    </script>
+
+    <div class="card" style="box-sizing: border-box; margin: 15px; padding: 20px; display: flex; flex-direction: row;">
+        <div style="position: relative; box-sizing: border-box;">
+            <canvas id="winRateChart"></canvas>
+        </div>
+        <div style="position: relative; flex: 1; box-sizing: border-box;">
+            <canvas id="barChart" style="width: 85%; height: 300px;"></canvas>
+        </div>
+    </div>
+
+    
+
+    <div class="accordion" id="accordionExample">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Accordion Item #1
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    추후 업데이트 예정
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+        var context1 = document
+            .getElementById('winRateChart')
+            .getContext('2d');
+        var myChart = new Chart(context1, {
+            type: 'pie',
+            data: {
+                labels: [
+                    '승리',
+                    '패배'
+                ],
+                datasets: [{
+                    label: 'My First Dataset',
+                    data: [ <%= league.wins %>, <%= league.losses %> ],
+                    backgroundColor: [
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 99, 132)'
+                    ],
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+			responsive: false,
+		    }
+        }
+        )
+
+        var context2 = document
+            .getElementById('barChart')
+            .getContext('2d');
+        var myChart2 = new Chart(context2, {
+            type: 'bar',
+            data: {
+                labels: ['1', '2', '3', '4', '5', '7', '8'],
+                datasets: [{
+                    label: '최근 20 게임 등수',
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 205, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(201, 203, 207, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgb(255, 99, 132)',
+                        'rgb(255, 159, 64)',
+                        'rgb(255, 205, 86)',
+                        'rgb(75, 192, 192)',
+                        'rgb(54, 162, 235)',
+                        'rgb(153, 102, 255)',
+                        'rgb(201, 203, 207)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+            responsive: false,
+            }
+        }
+        )
+    </script>
+</body>
+
+</html>
