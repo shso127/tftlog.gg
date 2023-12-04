@@ -48,32 +48,47 @@
         document.getElementById('winRate').innerHTML += '%'
     </script>
 
-    <div class="card" style="box-sizing: border-box; margin: 15px; padding: 20px; display: flex; flex-direction: row;">
-        <div style="position: relative; box-sizing: border-box;">
+    <div style="display: flex;">
+    <div class="card" style="width: 75rem; margin: 15px; padding: 20px; display: flex; flex-direction: row;">
+        <div style="position: relative; box-sizing: content-box;">
             <canvas id="winRateChart"></canvas>
         </div>
-        <div style="position: relative; flex: 1; box-sizing: border-box;">
-            <canvas id="barChart" style="width: 85%; height: 300px;"></canvas>
+        <div style="position: relative; flex: 1; box-sizing: content-box;">
+            <canvas id="barChart" style="width: 800px; height: 300px;"></canvas>
         </div>
     </div>
-
-    
-
-    <div class="accordion" id="accordionExample">
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Accordion Item #1
-                </button>
-            </h2>
-            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    추후 업데이트 예정
-                </div>
+    </div>
+    <% for (let i = 0; i < match_data.length; i++){ %>
+        <div class="card" style="margin: 15px;">
+            <div class="card-header">
+            <h5><%= match_data[i].placement %>등</h5>
+            <pre>Time of play : <%= match_info[i].game_datatime %>   Playtime : <%= match_info[i].game_length %></pre>                          
+            </div>
+            <div class="card-body">
+                <% for (let j = 0; j < match_data[i].traits.length; j++){ %>
+                    <% if(!match_data[i].traits[j].style) continue;%>
+                    <div style="position: relative; float: left;">      
+                        <div style="position: absolute;">
+                            <img src="img/synergies/<%= match_data[i].traits[j].name %>.png" class="synergie-img">
+                        </div>
+                        <img src="img/synergies/<%= match_data[i].traits[j].style %>.png" class="synergie-style-img">
+                    </div>
+                <% } %>
+                <br><br>
+                <% for (let j = 0; j < match_data[i].augments.length; j++){ %>
+                    <div style="position: relative; float: left;">      
+                        <img src="img/augments/<%= match_data[i].augments[j] %>.png" class="augment-img">
+                    </div>
+                <% } %>
+                <br><br>
+                <% for (let j = 0; j < match_data[i].units.length; j++){ %>
+                    <div style="position: relative; float: left;">      
+                        <img src="img/champions/<%= match_data[i].units[j].character_id %>.jpg" class="champion-img">
+                    </div>
+                <% } %>
             </div>
         </div>
-    </div>
+    <% } %>
 
 
 
@@ -112,39 +127,57 @@
         var context2 = document
             .getElementById('barChart')
             .getContext('2d');
-        var myChart2 = new Chart(context2, {
+
+        var config = {
             type: 'bar',
             data: {
-                labels: ['1', '2', '3', '4', '5', '7', '8'],
+                labels: ['1등', '2등', '3등', '4등', '5등', '6등','7등', '8등'],
                 datasets: [{
                     label: '최근 20 게임 등수',
-                    data: [65, 59, 80, 81, 56, 55, 40],
+                    data: [0, 0, 0, 0, 0, 0, 0, 0],
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(255, 205, 86, 0.2)',
                         'rgba(75, 192, 192, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(201, 203, 207, 0.2)'
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(162, 162, 162, 0.2)',
+                        'rgba(162, 162, 162, 0.2)',
+                        'rgba(162, 162, 162, 0.2)',
+                        'rgba(162, 162, 162, 0.2)'
                     ],
                     borderColor: [
                         'rgb(255, 99, 132)',
-                        'rgb(255, 159, 64)',
-                        'rgb(255, 205, 86)',
                         'rgb(75, 192, 192)',
-                        'rgb(54, 162, 235)',
-                        'rgb(153, 102, 255)',
-                        'rgb(201, 203, 207)'
+                        'rgb(75, 192, 192)',
+                        'rgb(75, 192, 192)',
+                        'rgb(162, 162, 162)',
+                        'rgb(162, 162, 162)',
+                        'rgb(162, 162, 162)',
+                        'rgb(162, 162, 162)'
                     ],
                     borderWidth: 1
                 }]
             },
             options: {
             responsive: false,
+            scales: {
+                yAxes: [{
+                    ticks: {
+                    beginAtZero: true
+                    }
+                }]
+                }
             }
         }
-        )
+
+        var myChart2 = new Chart(context2, config)
+    
+        <% for (let i = 0; i < match_data.length; i++) { %>
+            myChart2.data.datasets[0].data[<%= match_data[i].placement - 1 %>]++;
+        <% } %>
+
+        myChart2.update();
+        
     </script>
 </body>
 

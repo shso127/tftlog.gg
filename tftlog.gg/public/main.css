@@ -115,3 +115,29 @@ a {
   width: 100px;
   border-radius: 10px;
 }
+
+.synergie-img {
+  margin: 3px;
+  filter: invert();
+  width: 30px;
+  height: 30px;
+}
+
+.synergie-style-img {
+  margin: -3px;
+  width: 45px;
+  height: 45px;
+}
+
+.augment-img {
+  margin: 3px;
+  width: 30px;
+  height: 30px;
+}
+
+.champion-img {
+  margin: 3px;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+}

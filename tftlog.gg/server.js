@@ -206,35 +206,51 @@ app.get('/search', async (req, res) => {
     res.render('search.ejs', { contentList : result })
 })
 
+function unixTimestampToDateTime(unixTimestamp) {
+    const milliseconds = unixTimestamp;
+    const dateObject = new Date(milliseconds);
+    const year = dateObject.getFullYear();
+    const month = dateObject.getMonth() + 1;
+    const day = dateObject.getDate();
+
+    return year + '.' + month + '.' + day
+}
+
 app.get('/profile', async (req, res) => {
-    const summoner = await axios.get(`https://kr.api.riotgames.com/tft/summoner/v1/summoners/by-name/${req.query.val}?api_key=${process.env.APIKey}`)
-    const summoner_leage = await axios.get(
-        `https://kr.api.riotgames.com/tft/league/v1/entries/by-summoner/${summoner.data.id}?api_key=${process.env.APIKey}`
-    )
-    const matches = await axios.get(
-        `https://asia.api.riotgames.com/tft/match/v1/matches/by-puuid/${summoner.data.puuid}/ids?start=0&count=${Math.min(20, summoner_leage.data[0].wins + summoner_leage.data[0].losses)}&api_key=${process.env.APIKey}`
-    )
-    let match_data = []
-    let match_info = []
-    for (let i = 0; i < Math.min(20, summoner_leage.data[0].wins + summoner_leage.data[0].losses); i++){
-        const tmp = await axios.get(
-            `https://asia.api.riotgames.com/tft/match/v1/matches/${matches.data[i]}?api_key=${process.env.APIKey}`
+    try{
+        const summoner = await axios.get(`https://kr.api.riotgames.com/tft/summoner/v1/summoners/by-name/${req.query.val}?api_key=${process.env.APIKey}`)
+        const summoner_leage = await axios.get(
+            `https://kr.api.riotgames.com/tft/league/v1/entries/by-summoner/${summoner.data.id}?api_key=${process.env.APIKey}`
         )
-        for (let j = 0; j < 8; j++){
-            if (tmp.data.metadata.participants[j] == summoner.data.puuid) {
-                match_data.push(tmp.data.info.participants[j])
-                break
+        const matches = await axios.get(
+            `https://asia.api.riotgames.com/tft/match/v1/matches/by-puuid/${summoner.data.puuid}/ids?start=0&count=${Math.min(20, summoner_leage.data[0].wins + summoner_leage.data[0].losses)}&api_key=${process.env.APIKey}`
+        )
+        let match_data = []
+        let match_info = []
+        for (let i = 0; i < Math.min(20, summoner_leage.data[0].wins + summoner_leage.data[0].losses); i++){
+            const tmp = await axios.get(
+                `https://asia.api.riotgames.com/tft/match/v1/matches/${matches.data[i]}?api_key=${process.env.APIKey}`
+            )
+            for (let j = 0; j < 8; j++){
+                if (tmp.data.metadata.participants[j] == summoner.data.puuid) {
+                    match_data.push(tmp.data.info.participants[j])
+                    break
+                }
             }
+            match_info.push({
+                game_datatime : unixTimestampToDateTime(tmp.data.info.game_datetime), 
+                game_length : Math.floor(tmp.data.info.game_length / 60) + '분' + ' ' + Math.floor(tmp.data.info.game_length % 60) + '초'})
         }
-        match_info.push({game_datatime : tmp.data.info.game_datetime, game_length : tmp.data.info.game_length})
+        // console.log(summoner.data)
+        console.log(match_data[3].augments)
+        res.render('profile.ejs', 
+        { 
+            profile : summoner.data, 
+            league : summoner_leage.data[0], 
+            match_data : match_data,
+            match_info : match_info
+        })
+    } catch (e){
+        res.render('err.ejs')
     }
-    // console.log(summoner.data)
-    // console.log(match_data)
-    res.render('profile.ejs', 
-    { 
-        profile : summoner.data, 
-        league : summoner_leage.data[0], 
-        match_data : match_data,
-        match_info : match_info
-     })
 })
