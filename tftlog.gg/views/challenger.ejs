@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="/main.css" rel="stylesheet">
+</head>
+
+<body class="grey-bg">
+
+    <%- include('nav.ejs') %>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Rank</th>
+            <th>소환사명</th>
+            <th>Tier</th>
+            <th>LP</th>
+            <th>Wins</th>
+            <th>Losses</th>
+            <th>Top4 %</th>
+        </tr>
+        </thead>
+        <tbody>
+        <% for (let i = 0; i < challenger_data.length; i++) { %>
+        <tr>
+            <td>#<%= i + 1 %></td>
+            <td><a href="/profile?val=<%= challenger_data[i].summonerName %>"><%= challenger_data[i].summonerName %></a></td>
+            <td><img src="img/tier/Rank=Challenger.png" style="width: 30px; height: 30px;"> CHALLENGER</td>
+            <td><%= challenger_data[i].leaguePoints %> LP</td>
+            <td><%= challenger_data[i].wins %></td>
+            <td><%= challenger_data[i].losses %></td>
+            <td><%= (challenger_data[i].wins * 100 / (challenger_data[i].losses + challenger_data[i].wins)).toFixed(2) %> %</td>
+        </tr>
+        <% } %>
+        </tbody>
+    </table>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+</body>
+
+</html>

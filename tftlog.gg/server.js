@@ -254,3 +254,29 @@ app.get('/profile', async (req, res) => {
         res.render('err.ejs')
     }
 })
+
+const compareLeaguePoints = (a, b) => b.leaguePoints - a.leaguePoints;
+
+app.get('/challenger', async (req, res) => {
+    const challenger = await axios.get(`https://kr.api.riotgames.com/tft/league/v1/challenger?queue=RANKED_TFT&api_key=${process.env.APIKey}`)
+    let challenger_data = challenger.data.entries.slice(0, 100)
+    challenger_data.sort(compareLeaguePoints)
+    console.log(challenger_data[0])
+    res.render('challenger.ejs', { challenger_data : challenger_data })
+})
+
+app.get('/grandmaster', async (req, res) => {
+    const grandmaster = await axios.get(`https://kr.api.riotgames.com/tft/league/v1/grandmaster?queue=RANKED_TFT&api_key=${process.env.APIKey}`)
+    let grandmaster_data = grandmaster.data.entries.slice(0, 100)
+    grandmaster_data.sort(compareLeaguePoints)
+    console.log(grandmaster_data)
+    res.render('grandmaster.ejs', { grandmaster_data : grandmaster_data })
+})
+
+app.get('/master', async (req, res) => {
+    const master = await axios.get(`https://kr.api.riotgames.com/tft/league/v1/master?queue=RANKED_TFT&api_key=${process.env.APIKey}`)
+    let master_data = master.data.entries.slice(0, 100)
+    master_data.sort(compareLeaguePoints)
+    console.log(master_data)
+    res.render('master.ejs', { master_data : master_data })
+})
